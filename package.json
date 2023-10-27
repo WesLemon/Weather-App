@@ -1,0 +1,20 @@
+{
+  "name": "assignment1",
+  "version": "1.0.0",
+  "description": "CSU44000",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Wesley Shaw",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "vuetify": "^3.3.22"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

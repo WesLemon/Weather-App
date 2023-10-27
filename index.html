@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>CSU44000 Weather App</title>
+</head>
+
+<body>
+    <div id="app">
+        <div class="main">
+            <h1>CSU44000 - Weather App</h1>
+            <input v-model="city" placeholder="Enter city name">
+            <button @click="on_submit">Get Weather</button>
+            <button @click="search_current_location">Use Current Location</button>
+            <div class="results">
+                <div class="messages">
+                    <div v-if="cold">
+                        <p>&#129398 Pack warm clothes, it's gonna be cold! &#129398</p>
+                    </div>
+                    <div v-if="mild">
+                        <p>&#128528 Pack for mild weather. &#128528</p>
+                    </div>
+                    <div v-if="hot">
+                        <p>&#129397 Pack for hot weather! &#129397</p>
+                    </div>
+                    <div v-if="umbrella">
+                        <p>&#9748 Bring an umbrella, it's going to rain! &#9748</p>
+                    </div>
+                    <div v-if="mask">
+                        <p>&#128567 Wear a mask, the air pollution will be high! &#128567</p>
+                    </div>
+                </div>
+
+                <div class="weather" v-if="weather_data">
+                    <div class="five-days">
+                        <h2>Weather for {{ weather_data.city }}, {{ weather_data.country }} over the next 5 days:</h2>
+                        <p>&#x1F321; Average Temperature: {{ weather_data.avg_temp }}°C &#x1F321;</p>
+                        <p>&#x1f4c9; Minimum Temperature: {{weather_data.min_temp }}°C &#x1f4c9;</p>
+                        <p>&#x1f4c8; Maximum Temperature: {{weather_data.max_temp }}°C &#x1f4c8;</p>
+                        <p>&#x1f4a8; Average Wind Speed: {{ weather_data.avg_wind }}m/s &#x1f4a8;</p>
+                        <p>&#x1f327; Expected Rainfall: {{ weather_data.rainfall }}mm &#x1f327;</p>
+                        <p>&#x2600; Max UV Index: {{ uv }} &#x2600;</p>
+                    </div>
+                    <div class="pollution" v-if="pollution_data">
+                        <h2>Pollution Data for {{ weather_data.city }}, {{ weather_data.country }}</h2>
+                        <p>&#128567; PM2.5 Air Pollution: {{ pollution_data }} &#128567;</p>
+                    </div>
+                    <div class="summary-main">
+                        <h2>5 Day Weather Summary</h2>
+                        <div class="summary">
+                            <div v-for="(values, day) in weather_data.days">
+                                <h3>{{ day }}</h3>
+                                <h4>&#x1F321; Avg Temp &#x1F321;</h4>
+                                <p>{{ values.avg_temp }}°C</p>
+                                <h4>&#x1f327; Rainfall &#x1f327;</h4>
+                                <p>{{ values.rainfall }}mm</p>
+                                <h4>&#x1f4a8; Avg. Wind &#x1f4a8;</h4>
+                                <p>{{ values.avg_wind }}m/s</p>
+                                <h4>&#127749; Sunrise &#127749;</h4>
+                                <p>{{ values.sun.sunrise }}</p>
+                                <h4>&#127751; Sunset &#127751;</h4>
+                                <p>{{ values.sun.sunset }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.25"></script>
+
+    <script>
+        const { createApp } = Vue;
+
+        const app = createApp({
+            data() {
+                return {
+                    city: '',
+                    weather_data: null,
+                    pollution_data: null,
+                    umbrella: false,
+                    hot: false,
+                    mild: false,
+                    cold: false,
+                    mask: false,
+                    sun_data: {},
+                    uv: null
+                };
+            },
+            methods: {
+                fetch_weather_data() {
+                    fetch('http://localhost:3333/weather/' + this.city)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.weather_data = data;
+                            this.fetch_pollution_data(data.lon, data.lat);
+                            this.update_data();
+                            this.fetch_sun_data(data.lat, data.lon);
+                            this.fetch_uv_data(data.lat, data.lon)
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                },
+                fetch_pollution_data(lon, lat) {
+                    fetch('http://localhost:3333/pollution/' + lon + '/' + lat)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.pollution_data = data;
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                },
+                on_submit() {
+                    this.umbrella = false;
+                    this.hot = false;
+                    this.mild = false;
+                    this.cold = false;
+                    this.mask = false;
+                    this.fetch_weather_data();
+                },
+                update_data() {
+                    if (this.weather_data.avg_temp < 13)
+                        this.cold = true;
+                    else if (this.weather_data.avg_temp < 24)
+                        this.mild = true;
+                    else
+                        this.hot = true;
+
+                    if (this.weather_data.rainfall > 0)
+                        this.umbrella = true;
+
+                    if (this.pollution_data > 10)
+                        this.mask = true;
+                },
+                fetch_sun_data(lat, lon) {
+                    Object.keys(this.weather_data.days).forEach(date => {
+                        fetch('http://localhost:3333/sun/' + lat + '/' + lon + '/' + date)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.weather_data.days[date].sun = data
+                            })
+                    })
+                },
+                fetch_uv_data(lat, lon) {
+                    fetch('http://localhost:3333/uv/' + lat + '/' + lon)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.uv = data.result.uv_max;
+                        })
+                },
+                search_current_location() {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        fetch('http://localhost:3333/location/' + lat + '/' + lon)
+                            .then(response => response.json())
+                            .then(data => {
+                                this.city = data;
+                                this.on_submit();
+                            })
+                    })
+                }
+            },
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

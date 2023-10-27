@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#app {
+    height: 100vh;
+}
+
+html {
+    max-height: 100vh;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 100% 100%;
+    animation: gradient 15s ease infinite;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+}
+
+.summary h3 {
+    font-size: 20px;
+}
+
+.summary div {
+    padding: 8px;
+    border-radius: 18px;
+    background: linear-gradient(-45deg, #23a6d5, #23d5ab);
+}
+
+.summary h4 {
+    font-size: 16px;
+}
+
+.summary p {
+    font-size: 14px;
+}
+
+.main {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+    gap: 25px;
+}
+
+h1 {
+    text-transform: uppercase;
+    background-image: linear-gradient(-225deg,
+            #231557 0%,
+            #44107a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 60px;
+}
+
+input {
+    text-align: center;
+    padding: 5px;
+    font-size: 16px;
+    background: radial-gradient(circle at 18.7% 37.8%, rgb(250, 250, 250) 0%, rgb(225, 234, 238) 90%);
+    border-radius: 25px;
+    color: #231557;
+    font-weight: 650;
+}
+
+::placeholder {
+    color: #231557;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: linear-gradient(-45deg, #231557, #44107a);
+    border-radius: 25px;
+    color: #23d5ab;
+    font-weight: 650;
+}
+
+.messages {
+    font-size: 24px;
+    color: #44107a;
+    font-weight: 600;
+}
+
+.weather {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.summary-main {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border-radius: 25px;
+    background-color: rgba(355, 355, 355, .2);
+    padding: 10px;
+    color: #44107a
+}
+
+h2 {
+    font-size: 32px;
+    color: #231557;
+    font-weight: 700;
+}
+
+.five-days {
+    border-radius: 25px;
+    background-color: rgba(355, 355, 355, .2);
+    padding: 10px;
+    color: #44107a
+}
+
+.five-days p {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.pollution {
+    border-radius: 25px;
+    background-color: rgba(355, 355, 355, .2);
+    padding: 10px;
+    color: #44107a;
+    font-size: 22px;
+    font-weight: 500;
+}
